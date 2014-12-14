@@ -14,6 +14,7 @@ public:
 	Bs update();
 private:
 	void render();
+	void drawBox(GLfloat);
 	Material * material;
 	double size;
 	Vector3d color; 

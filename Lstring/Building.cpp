@@ -6,7 +6,7 @@ Building::Building(Matrix4d rootC) {
 
 	initT.makeTranslate(0.0, HALF_BUILDING_SIZE, 0.0);
 	root = new MatrixTransform(rootC * initT);
-	root->addChild(new Cube(BUILDING_SIZE, Vector3d(0.3, 0.3, 0.3), draw::SOLID));
+	root->addChild(new Cube(BUILDING_SIZE, Vector3d(1.0, 1.0, 1.0), draw::SOLID));
 
 }
 

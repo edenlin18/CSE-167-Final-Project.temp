@@ -26,8 +26,8 @@ int main(int argc, char** argv){
 
 	// Generate light source:
 	glLightfv(GL_LIGHT0, GL_POSITION, position);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	// glEnable(GL_LIGHTING);
+	// glEnable(GL_LIGHT0);
 
 	Window::init();
 	glutReshapeFunc(Window::reshapeCallback);

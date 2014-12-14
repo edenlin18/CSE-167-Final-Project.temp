@@ -36,6 +36,38 @@ City::City() {
 	MatrixTransform* groundTransform = new MatrixTransform(ScalingSetter);
 	root->addChild(groundTransform);
 	groundTransform->addChild(new Quad());
+	init();
+}
+
+void City::init() {
+
+	// Create ID for texture
+	glGenTextures(1, 0);
+
+	int width, height;
+	char* filenames = "pixelcity_windows7.jpg";
+	unsigned char* image;
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	image = SOIL_load_image(filenames, &width, &height, 0, SOIL_LOAD_RGB);
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+	GL_UNSIGNED_BYTE, image);
+
+	// Make sure no bytes are padded:
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// Select GL_MODULATE to mix texture with polygon color for shading:
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// Use bilinear interpolation:
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	
+	glBindTexture(GL_TEXTURE_2D, NULL);
 }
 
 MatrixTransform* City::getRoot() {
