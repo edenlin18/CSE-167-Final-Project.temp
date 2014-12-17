@@ -12,7 +12,7 @@ City::City() {
 
 	for (double z = -50.0; z < 50.0; z += 5.0) {
 		for (double x = -50.0; x < 50.0; x += 5.0) {
-			translationSetter.makeTranslate(x, 1.0, z);
+			translationSetter.makeTranslate(x, 0.0, z);
 			if (x < 0) {
 				maxH = ((double) rand() * (MEDIUM_BUILDING_MAX_HEIGHT - MEDIUM_BUILDING_MIN_HEIGHT)) / (double) RAND_MAX + MEDIUM_BUILDING_MIN_HEIGHT;
 				minH = ((double) rand() * (maxH - MEDIUM_BUILDING_MIN_HEIGHT)) / (double) RAND_MAX + MEDIUM_BUILDING_MIN_HEIGHT;

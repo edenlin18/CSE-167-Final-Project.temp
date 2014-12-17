@@ -1,6 +1,5 @@
 #include "Building.h"
 
-
 Building::Building(GLuint buildingChoice, GLuint roofChoice, double r, double g, double b, GLuint* texture, GLdouble xScaling, GLdouble yScaling, GLdouble zScaling, Matrix4d rootC) {
 	Matrix4d initT;
 	
