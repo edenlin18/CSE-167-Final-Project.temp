@@ -10,12 +10,13 @@
 class Cube : public Geode{
 
 public:
-	Cube(double s, Vector3d c, draw::mode m, Material * ma = NULL);
+	Cube(Matrix4d matrix, double s, Vector3d c, draw::mode m, Material * ma = NULL);
 	Bs update();
 private:
 	void render();
 	void drawBox(GLfloat);
 	Material * material;
+	Matrix4d matrix;
 	double size;
 	Vector3d color; 
 	draw::mode mode;

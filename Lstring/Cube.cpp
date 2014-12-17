@@ -1,6 +1,7 @@
 #include "Cube.h"
 
-Cube::Cube(double s, Vector3d c, draw::mode m, Material * ma){
+Cube::Cube(Matrix4d matrix, double s, Vector3d c, draw::mode m, Material * ma){
+	this->matrix = matrix;
 	size = s;
 	color = c;
 	mode = m;
@@ -61,6 +62,12 @@ void Cube::drawBox(GLfloat size) {
 	glCullFace(GL_BACK);
 	glEnable(GL_TEXTURE_2D);
 
+	//Matrix4d temp;
+	//glGetDoublev(GL_MODELVIEW_MATRIX, temp.getPointer());
+	double xScale = matrix.get(0, 0);
+	double yScale = matrix.get(1, 1);
+	double zScale = matrix.get(2, 2);
+
 	for (i = 5; i >= 0; i--) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glColor3d(color[0], color[1], color[2]);
@@ -69,25 +76,66 @@ void Cube::drawBox(GLfloat size) {
 			glBindTexture(GL_TEXTURE_2D, NULL);
 			glColor3d(0.0, 0.0, 0.0);
 		}
-		
-		Matrix4d temp;
-
-		glGetDoublev(GL_MODELVIEW_MATRIX, temp.getPointer());
-		double xScale = temp.get(0, 0);
-		double yScale = temp.get(1, 1);
-		double zScale = temp.get(2, 2);
 
 		glBegin(GL_QUADS);
 		glNormal3fv(&n[i][0]);
-		glTexCoord2f(0, 1);  glVertex3fv(&v[faces[i][0]][0]);
-		glTexCoord2f(1, 1);  glVertex3fv(&v[faces[i][1]][0]);
-		glTexCoord2f(1, 0);  glVertex3fv(&v[faces[i][2]][0]);
-		glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 
+		switch (i) {
+			// right side
+			case 0:
+				glTexCoord2f(0, yScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(zScale * 0.1, yScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(zScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+				break;
+			// top
+			case 1:
+				glTexCoord2f(0, zScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(xScale * 0.1, zScale * 0.1);    glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(xScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+				break;
+			// left
+			case 2:
+				glTexCoord2f(0, yScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(zScale * 0.1, yScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(zScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+				break;
+			// bottom
+			case 3:
+				glTexCoord2f(0, xScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(xScale * 0.1, yScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+				break;
+			// front
+			case 4:
+				glTexCoord2f(0, xScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(yScale * 0.1, xScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+				break;
+			// back
+			case 5:
+				glTexCoord2f(0, xScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(yScale * 0.1, xScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+				break;
+			default:
+				break;
+		}
+		/*glTexCoord2f(0, 1.f);  glVertex3fv(&v[faces[i][0]][0]);
+		glTexCoord2f(0.5f, 1);  glVertex3fv(&v[faces[i][1]][0]);
+		glTexCoord2f(0.5f, 0);  glVertex3fv(&v[faces[i][2]][0]);
+		glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
+		*/
 		glEnd();
 	}
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
+	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_CULL_FACE);
 }
 

@@ -71,7 +71,7 @@ KEY key = F1;
 
 // test
 City* c;
-
+Airplane* plane;
 
 
 
@@ -104,8 +104,11 @@ void Window::init(){
 
 
 	// test
+	srand(time(NULL));
 	c = new City();
 	root->addChild(c->getRoot());
+	plane = new Airplane();
+	root->addChild(plane->getRoot());
 }
 
 
@@ -145,9 +148,12 @@ void Window::displayCallback()
 	//root->draw(cam.getMatrix());
 	//root->draw(Matrix4d());
 	glLoadMatrixd((rotation * scaling).getPointer());
-	pbc->render(rotation * scaling);
+	// pbc->render(rotation * scaling);
 	
 	root->draw(rotation * scaling);
+
+//	obj->draw(rotation * scaling);
+
 
 	glFlush();
 	glutSwapBuffers(); 

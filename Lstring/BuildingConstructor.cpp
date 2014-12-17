@@ -47,24 +47,21 @@ void BuildingConstructor::construct() {
 	root->addChild(b->getRoot());
 	
 	//t s m
-	xTranslation = 0.0;
+	xTranslation = 0.5 - lotBias;
 	zTranslation = 0.0;
-	zScaling = ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;
+	zScaling = ((double) rand() * (currentMaxH - currentMinH)) / (double) RAND_MAX + currentMinH;
 
 	for (int count = 0; count < layerCount - 1; ++count) {
-		currentMaxH -= 0.5;
+		currentMaxH -= ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;;
 		rotation = rotation90 * rotation;
 		
 		zScaling = ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;
 		// std::cerr << "zScaling: " << zScaling << std::endl;
 		scaling.makeScale(xScaling, currentMaxH, zScaling);
 
-		xTranslation = 0.5 - lotBias;
-
 		translation.makeTranslate(xTranslation, 0.0, 0.0);
 		b = new Building(rotation * translation * scaling);
 		root->addChild(b->getRoot());
-
 	}
 }
 

@@ -8,6 +8,9 @@
 
 // test
 #include "City.h"
+#include "Object.h"
+#include "Parser.h"
+#include "Airplane.h"
 
 
 class Window	  // OpenGL output window related routines
