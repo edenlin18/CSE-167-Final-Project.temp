@@ -3,6 +3,8 @@
 using namespace std;
 int main(int argc, char** argv){
 	float specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	float diffuse [] = { 1.0, 1.0, 1.0, 1.0 };
+	float ambient [] = { 1.0, 1.0, 1.0, 1.0 };
 	float shininess[] = { 100.0 };
 	float position[] = { 0.0, 10.0, 1.0, 0.0 };	// lightsource position
 	glutInit(&argc, argv);      	      	      // initialize GLUT
@@ -20,6 +22,8 @@ int main(int argc, char** argv){
 
 	// Generate material properties:
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glEnable(GL_COLOR_MATERIAL);

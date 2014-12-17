@@ -44,39 +44,75 @@ void BuildingConstructor::construct() {
 	rotation.identity();
 	rotation90.makeRotateY(rotationAngle);
 
-	// base
-	if (choice == 2) {
-		scaling.makeScale(3.0, 1.0, 3.0);
-		buildingChoice = rand() * (3 + 1 - 1) / RAND_MAX + 1;
-		building = new Building(buildingChoice, roofChoice, r, g, b, texture, 3.0, 1.0, 3.0, scaling);
-		root->addChild(building->getRoot());
-	}
-	else while (buildingChoice == 1) {
-		buildingChoice = rand() * (3 + 1) / RAND_MAX;
-	}
+	switch (choice) {
+		// medium buildings
+		case 0:
+			while (buildingChoice == 1) {
+				buildingChoice = rand() * (3 + 1) / RAND_MAX;
+			}
+			std::cerr << "hhhh" << std::endl;
+			xScaling = (double) rand() * (3.0 + 1.0 - 2.0) / (double) RAND_MAX + 2.0;
+			zScaling = (double) rand() * (3.0 + 1.0 - 2.0) / (double) RAND_MAX + 2.0;
+			translation.makeTranslate(xTranslation, 0.0, zTranslation);
+			scaling.makeScale(xScaling, currentMaxH, zScaling);
+			building = new Building(buildingChoice, roofChoice, r, g, b, texture, xScaling, currentMaxH, zScaling, translation * scaling);
+			root->addChild(building->getRoot());
+			break;
+		// mid towards out buildings
+		case 1:
+			buildingChoice = rand() * (3 + 1 - 1) / RAND_MAX + 1;
+			xScaling = zScaling = (double) rand() * (1.0 + 1.0 - 0.5) / (double) RAND_MAX + 0.5;
 
-	translation.makeTranslate(xTranslation, 0.0, zTranslation);
-	scaling.makeScale(xScaling, currentMaxH, zScaling);
-	building = new Building(buildingChoice, roofChoice, r, g, b, texture, xScaling, currentMaxH, zScaling, translation * scaling);
-	root->addChild(building->getRoot());
-	
-	//t s m
-	xTranslation = 0.5 - lotBias;
-	zTranslation = 0.0;
-	zScaling = ((double) rand() * (currentMaxH - currentMinH)) / (double) RAND_MAX + currentMinH;
+			for (int count = 0; count < layerCount - 1; ++count) {
+				currentMaxH -= ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;;
 
-	for (int count = 0; count < layerCount - 1; ++count) {
-		currentMaxH -= ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;;
-		rotation = rotation90 * rotation;
-		
-		zScaling = ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;
-		// std::cerr << "zScaling: " << zScaling << std::endl;
-		scaling.makeScale(xScaling, currentMaxH, zScaling);
+				xScaling += 0.3;
+				zScaling += 0.3;
 
-		translation.makeTranslate(xTranslation, 0.0, 0.0);
+				if (xScaling > 3.0 || zScaling > 3.0) {
+					break;
+				}
+				// std::cerr << "zScaling: " << zScaling << std::endl;
+				scaling.makeScale(xScaling, currentMaxH, zScaling);
 
-		building = new Building(buildingChoice, roofChoice, r, g, b, texture, xScaling, currentMaxH, zScaling, rotation * translation * scaling);
-		root->addChild(building->getRoot());
+				building = new Building(buildingChoice, roofChoice, r, g, b, texture, xScaling, currentMaxH, zScaling, scaling);
+				root->addChild(building->getRoot());
+			}
+			break;
+		// tall buildings with rotation
+		case 2:
+			scaling.makeScale(3.0, 1.0, 3.0);
+			buildingChoice = rand() * (3 + 1 - 1) / RAND_MAX + 1;
+			building = new Building(buildingChoice, roofChoice, r, g, b, texture, 3.0, 1.0, 3.0, scaling);
+			root->addChild(building->getRoot());
+
+
+			translation.makeTranslate(xTranslation, 0.0, zTranslation);
+			scaling.makeScale(xScaling, currentMaxH, zScaling);
+			building = new Building(buildingChoice, roofChoice, r, g, b, texture, xScaling, currentMaxH, zScaling, translation * scaling);
+			root->addChild(building->getRoot());
+
+			//t s m
+			xTranslation = 0.5 - lotBias;
+			zTranslation = 0.0;
+			zScaling = ((double) rand() * (currentMaxH - currentMinH)) / (double) RAND_MAX + currentMinH;
+
+			for (int count = 0; count < layerCount - 1; ++count) {
+				currentMaxH -= ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;;
+				rotation = rotation90 * rotation;
+
+				zScaling = ((double) rand() * (scaleMax - scaleMin)) / (double) RAND_MAX + scaleMin;
+				// std::cerr << "zScaling: " << zScaling << std::endl;
+				scaling.makeScale(xScaling, currentMaxH, zScaling);
+
+				translation.makeTranslate(xTranslation, 0.0, 0.0);
+
+				building = new Building(buildingChoice, roofChoice, r, g, b, texture, xScaling, currentMaxH, zScaling, rotation * translation * scaling);
+				root->addChild(building->getRoot());
+			}
+			break;
+		default:
+			break;
 	}
 }
 
