@@ -26,7 +26,7 @@ City::City() {
 				choice = 2;
 			}
 
-			bConstructor = new BuildingConstructor(translationSetter, maxH, minH, layerCount, choice);
+			bConstructor = new BuildingConstructor(texture, translationSetter, maxH, minH, layerCount, choice);
 			root->addChild(bConstructor->getRoot());
 		}
 	}
@@ -42,21 +42,26 @@ void City::init() {
 
 	glEnable(GL_TEXTURE_2D);
 	// Create ID for texture
-	glGenTextures(6, &texture[0]);
+	//glGenTextures(6, &texture[0]);
 
 	int width, height;
-	char* filenames[6] = { "./building_texture/building5.jpg", "./building_texture/building2.jpg", "./building_texture/building3.jpg", 
-		"./building_texture/building4.jpg", "./building_texture/roof1.jpg", "./building_texture/roof2.jpg" };
+	char* filenames[6] = { "./building_texture/building5.jpg", "./building_texture/pixelcity_windows7.jpg", "./building_texture/building3.jpg", 
+		"./building_texture/building1.jpg", "./building_texture/roof1.jpg", "./building_texture/roof2.jpg" };
 	unsigned char* image;
 
 	for (unsigned int counter = 0; counter < 6; ++counter) {
 
-		glBindTexture(GL_TEXTURE_2D, texture[counter]);
+		texture[counter] = SOIL_load_OGL_texture
+			(
+			filenames[counter],
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+			);
 
-		image = SOIL_load_image(filenames[counter], &width, &height, 0, SOIL_LOAD_RGB);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-			GL_UNSIGNED_BYTE, image);
+		if (texture[counter] == 0) {
+			std::cerr << "FAIL AT " << counter << std::endl;
+		}
 
 		// Make sure no bytes are padded:
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

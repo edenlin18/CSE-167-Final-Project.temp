@@ -1,6 +1,7 @@
 #include "Cube.h"
 
-Cube::Cube(const int& buildingChoice, const int& roofChoice, const GLdouble& xScaling, const GLdouble& yScaling, const GLdouble& zScaling, double s, Vector3d c, draw::mode m, Material * ma) {
+Cube::Cube(GLuint* texture, const int& buildingChoice, const int& roofChoice, const GLdouble& xScaling, const GLdouble& yScaling, const GLdouble& zScaling, double s, Vector3d c, draw::mode m, Material * ma) {
+	this->texture = texture;
 	this->buildingChoice = buildingChoice;
 	this->roofChoice = roofChoice;
 	//std::cerr << "bChoice: " << buildingChoice << "rChoice: " << roofChoice << std::endl;
@@ -15,19 +16,19 @@ Cube::Cube(const int& buildingChoice, const int& roofChoice, const GLdouble& xSc
 	bs.center = Vector3d(0, 0, 0);
 }
 
-void Cube::render(){
-	if (material != NULL){
+void Cube::render() {
+	if (material != NULL) {
 		material->apply();
 	}
 	else
 		glColor3d(color[0], color[1], color[2]);
-	switch (mode){
-	case draw::SOLID:
-		drawBox(size);
-		break;
-	case draw::WIRE:
-		glutWireCube(size);
-		break; 
+	switch (mode) {
+		case draw::SOLID:
+			drawBox(size);
+			break;
+		case draw::WIRE:
+			glutWireCube(size);
+			break;
 	}
 }
 
@@ -61,6 +62,8 @@ void Cube::drawBox(GLfloat size) {
 	v[0][2] = v[3][2] = v[4][2] = v[7][2] = -size / 2;
 	v[1][2] = v[2][2] = v[5][2] = v[6][2] = size / 2;
 
+
+	double scalingProportion = 0.8;
 	// Enable Culling
 	//glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
@@ -74,11 +77,16 @@ void Cube::drawBox(GLfloat size) {
 
 		glColor3d(color[0], color[1], color[2]);
 
+		scalingProportion = 0.8;
 		if (i != 1 && i != 3) {
-			glBindTexture(GL_TEXTURE_2D, 0);
+			if (buildingChoice == 1) {
+				scalingProportion = 0.05;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, texture[buildingChoice]);
 		}
 		else {
-			glBindTexture(GL_TEXTURE_2D, roofChoice);
+			glBindTexture(GL_TEXTURE_2D, texture[roofChoice]);
 		}
 
 		glBegin(GL_QUADS);
@@ -87,44 +95,44 @@ void Cube::drawBox(GLfloat size) {
 		switch (i) {
 			// right side
 			case 0:
-				glTexCoord2f(0, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(zScaling * SCALING_PROPORTION, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(zScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, yScaling * scalingProportion);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(zScaling * scalingProportion, yScaling * scalingProportion);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(zScaling * scalingProportion, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// top
 			case 1:
-				glTexCoord2f(0, zScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(xScaling * SCALING_PROPORTION, zScaling * SCALING_PROPORTION);    glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(xScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, zScaling * scalingProportion);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(xScaling * scalingProportion, zScaling * scalingProportion);    glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(xScaling * scalingProportion, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// left
 			case 2:
-				glTexCoord2f(0, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(zScaling * SCALING_PROPORTION, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(zScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, yScaling * scalingProportion);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(zScaling * scalingProportion, yScaling * scalingProportion);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(zScaling * scalingProportion, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// bottom
 			case 3:
-				glTexCoord2f(0, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(xScaling * SCALING_PROPORTION, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(yScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, xScaling * scalingProportion);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(xScaling * scalingProportion, yScaling * scalingProportion);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScaling * scalingProportion, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// front
 			case 4:
-				glTexCoord2f(0, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(yScaling * SCALING_PROPORTION, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(yScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, xScaling * scalingProportion);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(yScaling * scalingProportion, xScaling * scalingProportion);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScaling * scalingProportion, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// back
 			case 5:
-				glTexCoord2f(0, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(yScaling * SCALING_PROPORTION, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(yScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, xScaling * scalingProportion);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(yScaling * scalingProportion, xScaling * scalingProportion);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScaling * scalingProportion, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			default:

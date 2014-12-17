@@ -7,12 +7,10 @@
 #include "Const.h"
 #include "Material.h"
 
-const double SCALING_PROPORTION = 0.8;
-
 class Cube : public Geode{
 
 public:
-	Cube(const int& buildingChoice, const int& roofChoice, const GLdouble& xScaling, const GLdouble& yScaling, const GLdouble& zScaling, double s, Vector3d c, draw::mode m, Material * ma = NULL);
+	Cube(GLuint* texture, const int& buildingChoice, const int& roofChoice, const GLdouble& xScaling, const GLdouble& yScaling, const GLdouble& zScaling, double s, Vector3d c, draw::mode m, Material * ma = NULL);
 	Bs update();
 private:
 	void render();
@@ -20,6 +18,7 @@ private:
 	Material * material;
 	int buildingChoice;
 	int roofChoice;
+	GLuint* texture;
 	GLdouble xScaling;
 	GLdouble yScaling;
 	GLdouble zScaling;

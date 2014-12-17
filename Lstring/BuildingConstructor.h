@@ -6,7 +6,7 @@
 
 class BuildingConstructor {
 	public:
-	BuildingConstructor(Matrix4d, GLdouble, GLdouble, int, int);
+	BuildingConstructor(GLuint[6], Matrix4d, GLdouble, GLdouble, int, int);
 	void construct();
 	void update();
 	MatrixTransform* getRoot();
@@ -14,6 +14,7 @@ class BuildingConstructor {
 
 	protected:
 	MatrixTransform* root;
+	GLuint* texture;
 	GLdouble maxH;
 	GLdouble minH;
 	int layerCount;
