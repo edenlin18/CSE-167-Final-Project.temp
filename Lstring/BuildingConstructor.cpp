@@ -37,13 +37,13 @@ void BuildingConstructor::construct() {
 	// base
 	if (choice == 2) {
 		scaling.makeScale(3.0, 1.0, 3.0);
-		b = new Building(scaling);
+		b = new Building(3.0, 1.0, 3.0, scaling);
 		root->addChild(b->getRoot());
 	}
 
 	translation.makeTranslate(xTranslation, 0.0, zTranslation);
 	scaling.makeScale(xScaling, currentMaxH, zScaling);
-	b = new Building(translation * scaling);
+	b = new Building(xScaling, currentMaxH, zScaling, translation * scaling);
 	root->addChild(b->getRoot());
 	
 	//t s m
@@ -60,7 +60,8 @@ void BuildingConstructor::construct() {
 		scaling.makeScale(xScaling, currentMaxH, zScaling);
 
 		translation.makeTranslate(xTranslation, 0.0, 0.0);
-		b = new Building(rotation * translation * scaling);
+
+		b = new Building(xScaling, currentMaxH, zScaling, rotation * translation * scaling);
 		root->addChild(b->getRoot());
 	}
 }

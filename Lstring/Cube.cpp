@@ -1,7 +1,12 @@
 #include "Cube.h"
 
-Cube::Cube(Matrix4d matrix, double s, Vector3d c, draw::mode m, Material * ma){
-	this->matrix = matrix;
+Cube::Cube(const int& buildingChoice, const int& roofChoice, const GLdouble& xScaling, const GLdouble& yScaling, const GLdouble& zScaling, double s, Vector3d c, draw::mode m, Material * ma) {
+	this->buildingChoice = buildingChoice;
+	this->roofChoice = roofChoice;
+	//std::cerr << "bChoice: " << buildingChoice << "rChoice: " << roofChoice << std::endl;
+	this->xScaling = xScaling;
+	this->yScaling = yScaling;
+	this->zScaling = zScaling;
 	size = s;
 	color = c;
 	mode = m;
@@ -64,17 +69,16 @@ void Cube::drawBox(GLfloat size) {
 
 	//Matrix4d temp;
 	//glGetDoublev(GL_MODELVIEW_MATRIX, temp.getPointer());
-	double xScale = matrix.get(0, 0);
-	double yScale = matrix.get(1, 1);
-	double zScale = matrix.get(2, 2);
 
 	for (i = 5; i >= 0; i--) {
-		glBindTexture(GL_TEXTURE_2D, 0);
+
 		glColor3d(color[0], color[1], color[2]);
 
-		if (i == 1) {
-			glBindTexture(GL_TEXTURE_2D, NULL);
-			glColor3d(0.0, 0.0, 0.0);
+		if (i != 1 && i != 3) {
+			glBindTexture(GL_TEXTURE_2D, 3);
+		}
+		else {
+			glBindTexture(GL_TEXTURE_2D, 4);
 		}
 
 		glBegin(GL_QUADS);
@@ -83,44 +87,44 @@ void Cube::drawBox(GLfloat size) {
 		switch (i) {
 			// right side
 			case 0:
-				glTexCoord2f(0, yScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(zScale * 0.1, yScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(zScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(zScaling * SCALING_PROPORTION, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(zScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// top
 			case 1:
-				glTexCoord2f(0, zScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(xScale * 0.1, zScale * 0.1);    glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(xScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, zScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(xScaling * SCALING_PROPORTION, zScaling * SCALING_PROPORTION);    glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(xScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// left
 			case 2:
-				glTexCoord2f(0, yScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(zScale * 0.1, yScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(zScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(zScaling * SCALING_PROPORTION, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(zScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// bottom
 			case 3:
-				glTexCoord2f(0, xScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(xScale * 0.1, yScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(yScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(xScaling * SCALING_PROPORTION, yScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// front
 			case 4:
-				glTexCoord2f(0, xScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(yScale * 0.1, xScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(yScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(yScaling * SCALING_PROPORTION, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			// back
 			case 5:
-				glTexCoord2f(0, xScale * 0.1);  glVertex3fv(&v[faces[i][0]][0]);
-				glTexCoord2f(yScale * 0.1, xScale * 0.1);  glVertex3fv(&v[faces[i][1]][0]);
-				glTexCoord2f(yScale * 0.1, 0);  glVertex3fv(&v[faces[i][2]][0]);
+				glTexCoord2f(0, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][0]][0]);
+				glTexCoord2f(yScaling * SCALING_PROPORTION, xScaling * SCALING_PROPORTION);  glVertex3fv(&v[faces[i][1]][0]);
+				glTexCoord2f(yScaling * SCALING_PROPORTION, 0);  glVertex3fv(&v[faces[i][2]][0]);
 				glTexCoord2f(0, 0);  glVertex3fv(&v[faces[i][3]][0]);
 				break;
 			default:

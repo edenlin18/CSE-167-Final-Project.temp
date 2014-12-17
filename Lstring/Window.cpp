@@ -10,10 +10,13 @@
 #include "Sphere.h"
 #include "Line.h"
 #include "PiecewiseBezierCurve.h"
+#include "Camera.h"
 
 #define ROTSCALE 50.0;
 #define ZOOMSCALE 2.0;
 #define DELTA 0.1
+#define ANGLE 1.0
+#define TIME_INTERVAL 0.001
 
 using namespace std;
 
@@ -65,6 +68,8 @@ Vector3d eye(0, 2, -8);
 Vector3d lookat(0, 2, 0);
 Vector3d up(0, 1, 0);
 
+Camera cam(eye, lookat, up);
+
 KEY key = F1;
 
 
@@ -73,6 +78,9 @@ KEY key = F1;
 City* c;
 Airplane* plane;
 
+Vector3d oldPos;
+Vector3d newPos;
+double t = 0.0;
 
 
 void Window::init(){
@@ -95,12 +103,15 @@ void Window::init(){
 	tt->addChild(mt);
 	*/
 	Vector3d * v = new Vector3d[5];
-	v[0] = Vector3d(0, 1, 0);
-	v[1] = Vector3d(1, 2, 1);
-	v[2] = Vector3d(0.5, 1, 2);
-	v[3] = Vector3d(-0.2, 2, 1.5);
-	v[4] = Vector3d(-0.8, 1, 0);
+	v[0] = Vector3d(0, 9, 0);
+	v[1] = Vector3d(20, 12, 0);
+	v[2] = Vector3d(20, 9, -10);
+	v[3] = Vector3d(0, 12, -10);
+	v[4] = Vector3d(0, 9, 10);
 	pbc = new PiecewiseBezierCurve(4, v, 1000);
+	cam.move( pbc->getCp(0));
+	oldPos = pbc->getCp(0);
+	
 
 
 	// test
@@ -130,7 +141,7 @@ void Window::reshapeCallback(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(60.0, double(width) / (double)height, 1.0, 1000.0); // set perspective projection viewing frustum
-	gluLookAt(eye[0], eye[1], eye[2], lookat[0], lookat[1], lookat[2], up[0], up[1], up[2]);
+	//gluLookAt(eye[0], eye[1], eye[2], lookat[0], lookat[1], lookat[2], up[0], up[1], up[2]);
 	//pointLight.apply();
 }
 
@@ -147,10 +158,11 @@ void Window::displayCallback()
 	//glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, _diffuse);
 	//root->draw(cam.getMatrix());
 	//root->draw(Matrix4d());
-	glLoadMatrixd((rotation * scaling).getPointer());
-	// pbc->render(rotation * scaling);
+	//glLoadMatrixd((rotation * scaling).getPointer());
 	
-	root->draw(rotation * scaling);
+	//root->draw(rotation * scaling);
+	root->draw(cam.getMatrix() * rotation * scaling);
+	pbc->render(cam.getMatrix() * scaling);
 
 //	obj->draw(rotation * scaling);
 
@@ -231,57 +243,88 @@ void Window::keyboardProcess(unsigned char key, int x, int y){
 			pbc->setCp(index, v);
 		}
 		break;
-
+	case 'c':
+		t += TIME_INTERVAL;
+		if (t > 1)
+			t = 0.0;
+		newPos = pbc->compute(t);
+		cam.move(newPos);
+		oldPos = newPos;
+		break;
 	case 27:
 		exit(0);
 	}
 }
-void Window::processSpecialKeys(int k, int x, int y){
-	switch (k){
-	case GLUT_KEY_LEFT:
-		pbc->selectNext();
-		selected = true;
-		break;
-	case GLUT_KEY_RIGHT:
-		pbc->selectPrev();
-		selected = true;
-		break;
+void Window::processSpecialKeys(int k, int x, int y) {
+	switch (k) {
+		case GLUT_KEY_LEFT:
+			pbc->selectNext();
+			selected = true;
+			break;
+		case GLUT_KEY_RIGHT:
+			pbc->selectPrev();
+			selected = true;
+			break;
+		case GLUT_KEY_F1:
+			cam.move(FORWARD, DELTA);
+			break;
+		case GLUT_KEY_F2:
+			cam.move(BACKWARD, DELTA);
+			break;
+		case GLUT_KEY_F3:
+			cam.move(LEFTWARD, DELTA);
+			break;
+		case GLUT_KEY_F4:
+			cam.move(RIGHTWARD, DELTA);
+			break;
+		case GLUT_KEY_F5:
+			cam.move(UPWARD, DELTA);
+			break;
+		case GLUT_KEY_F6:
+			cam.move(DOWNWARD, DELTA);
+			break;
+		case GLUT_KEY_F7:
+			cam.rotate(Vector3d(0, 1, 0), ANGLE);
+			break;
 	}
 }
-void Window::mouseMotionProcess(int x, int y){
+void Window::mouseMotionProcess(int x, int y) {
 	Vector3d direction;
 	double pixel_diff;
 	double rot_angle, zoom_factor;
 	Vector3d curPoint;
 	curPoint = trackBallMapping(x, y);
-	switch (movement){
-	case control::ROTATION:
-	{
-		direction = curPoint - lastPoint;
-		double velocity = direction.magnitude();
-		if (velocity > 0.0001){
-			Vector3d rotAxis = lastPoint * curPoint;
-			rotAxis.normalize();
-			rot_angle = velocity * ROTSCALE;
-			Matrix4d r;
-			r.makeRotate(rot_angle, rotAxis);
-			rotation = r * rotation;
-			rotate_mt->setMatrix(rotation);
+	switch (movement) {
+		case control::ROTATION:
+		{
+			direction = curPoint - lastPoint;
+			double velocity = direction.magnitude();
+			if (velocity > 0.0001) {
+				Vector3d rotAxis = lastPoint * curPoint;
+				rotAxis.normalize();
+				rot_angle = velocity * ROTSCALE;
+				/*
+				Matrix4d r;
+				r.makeRotate(rot_angle, rotAxis);
+				rotation = r * rotation;
+				rotate_mt->setMatrix(rotation);
+				*/
+				cam.rotate(rotAxis, rot_angle);
+			}
 		}
-	}
-		break;
-	case control::SCALING:
-	{
-		pixel_diff = curPoint[1] - lastPoint[1];
-		zoom_factor = 1.0 + pixel_diff * ZOOMSCALE;
-		Matrix4d s;
-		s.makeScale(zoom_factor, zoom_factor, zoom_factor);
-		scaling = scaling * s;
-		scaling_mt->setMatrix(scaling);
-		displayCallback();
+			break;
+		case control::SCALING:
+		{
+			pixel_diff = curPoint[1] - lastPoint[1];
+			zoom_factor = 1.0 + pixel_diff * ZOOMSCALE;
+			Matrix4d s;
+			s.makeScale(zoom_factor, zoom_factor, zoom_factor);
+			scaling = scaling * s;
+			scaling_mt->setMatrix(scaling);
+			displayCallback();
 
-	}
-		break;
+		}
+			break;
 	}
 	lastPoint = curPoint;
 }

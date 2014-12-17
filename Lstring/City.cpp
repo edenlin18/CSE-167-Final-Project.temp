@@ -40,33 +40,39 @@ City::City() {
 
 void City::init() {
 
+	glEnable(GL_TEXTURE_2D);
 	// Create ID for texture
-	glGenTextures(1, 0);
+	glGenTextures(6, &texture[0]);
 
 	int width, height;
-	char* filenames = "pixelcity_windows7.jpg";
+	char* filenames[6] = { "./building_texture/building1.jpg", "./building_texture/building2.jpg", "./building_texture/building3.jpg", 
+		"./building_texture/building4.jpg", "./building_texture/roof1.jpg", "./building_texture/roof2.jpg" };
 	unsigned char* image;
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	for (unsigned int counter = 0; counter < 6; ++counter) {
 
-	image = SOIL_load_image(filenames, &width, &height, 0, SOIL_LOAD_RGB);
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-	GL_UNSIGNED_BYTE, image);
+		glBindTexture(GL_TEXTURE_2D, texture[counter]);
 
-	// Make sure no bytes are padded:
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		image = SOIL_load_image(filenames[counter], &width, &height, 0, SOIL_LOAD_RGB);
 
-	// Select GL_MODULATE to mix texture with polygon color for shading:
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+			GL_UNSIGNED_BYTE, image);
 
-	// Use bilinear interpolation:
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	
-	glBindTexture(GL_TEXTURE_2D, NULL);
+		// Make sure no bytes are padded:
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		// Select GL_MODULATE to mix texture with polygon color for shading:
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		// Use bilinear interpolation:
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		glBindTexture(GL_TEXTURE_2D, NULL);
+	}
+
 	glDisable(GL_TEXTURE_2D);
 }
 

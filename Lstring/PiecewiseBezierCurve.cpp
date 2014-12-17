@@ -125,6 +125,8 @@ void PiecewiseBezierCurve::render(Matrix4d m){
 	glColor3f(0, 1, 0);
 	glLineWidth(3);
 	double t = incr;
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixd(m.getPointer());
 	glBegin(GL_LINE_STRIP);
 	glVertex3f(cp[0][0], cp[0][1], cp[0][2]);
 	for (int i = 1; i < resolution; i++){
