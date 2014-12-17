@@ -6,17 +6,23 @@
 #include "Parser.h"
 
 class Airplane {
-	public:
-	Airplane();
+public:
+	Airplane(Vector3d position, Vector3d direction);
 	void init();
-	void draw();
 	void setMatrixTransformMatrix(Matrix4d&);
+	void move(Vector3d);
 	Matrix4d getMatrixTransformMatrix();
 	MatrixTransform* getRoot();
 	~Airplane();
 
-	private:
+private:
+	Vector3d position;
+	Vector3d direction;
 	MatrixTransform* root;
+	Matrix4d s;
+	Matrix4d r;
+	Matrix4d t;
+	Matrix4d temp;
 };
 
 #endif
