@@ -64,8 +64,8 @@ MatrixTransform* Window::scaling_mt = new MatrixTransform(scaling);
 MatrixTransform* Window::rotate_mt = new MatrixTransform(rotation);
 
 // camera parameters
-Vector3d eye(0, 2, -8);
-Vector3d lookat(0, 2, 0);
+Vector3d eye(0, 8, 10);
+Vector3d lookat(0, 8, 0);
 Vector3d up(0, 1, 0);
 
 Camera cam(eye, lookat, up);
@@ -80,7 +80,8 @@ Airplane* plane;
 
 Vector3d oldPos;
 Vector3d newPos;
-double t = 0.0;
+double t = 0.05;
+double tc = 0.0;
 
 
 void Window::init(){
@@ -108,7 +109,7 @@ void Window::init(){
 	v[2] = Vector3d(20, 9, -10);
 	v[3] = Vector3d(0, 12, -10);
 	v[4] = Vector3d(0, 9, 10);
-	pbc = new PiecewiseBezierCurve(4, v, 1000);
+	pbc = new PiecewiseBezierCurve(4, v, 10000);
 	cam.move( pbc->getCp(0));
 	oldPos = pbc->getCp(0);
 	
@@ -116,9 +117,12 @@ void Window::init(){
 
 	// test
 	srand(time(NULL));
-	c = new City();
-	root->addChild(c->getRoot());
-	plane = new Airplane();
+	//c = new City();
+	//root->addChild(c->getRoot());
+	plane = new Airplane(pbc->getCp(0),pbc->getCp(1) - pbc->getCp(0));
+	pbc->getCp(0).print("cp0: ");
+	pbc->getCp(1).print("cp1: ");
+	//plane = new Airplane(pbc->getCp(0), Vector3d(1, 0, 0));
 	root->addChild(plane->getRoot());
 }
 
@@ -140,7 +144,7 @@ void Window::reshapeCallback(int w, int h)
 	glViewport(0, 0, w, h);  // set new viewport size
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.0, double(width) / (double)height, 1.0, 1000.0); // set perspective projection viewing frustum
+	gluPerspective(60.0, double(width) / (double)height, 0.001, 1000.0); // set perspective projection viewing frustum
 	//gluLookAt(eye[0], eye[1], eye[2], lookat[0], lookat[1], lookat[2], up[0], up[1], up[2]);
 	//pointLight.apply();
 }
@@ -247,8 +251,9 @@ void Window::keyboardProcess(unsigned char key, int x, int y){
 		t += TIME_INTERVAL;
 		if (t > 1)
 			t = 0.0;
-		newPos = pbc->compute(t);
-		cam.move(newPos);
+		tc += TIME_INTERVAL;
+		cam.move(pbc->compute(tc));
+		plane->move(pbc->compute(t));
 		oldPos = newPos;
 		break;
 	case 27:
