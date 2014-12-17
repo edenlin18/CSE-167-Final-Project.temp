@@ -75,10 +75,10 @@ void Cube::drawBox(GLfloat size) {
 		glColor3d(color[0], color[1], color[2]);
 
 		if (i != 1 && i != 3) {
-			glBindTexture(GL_TEXTURE_2D, 3);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 		else {
-			glBindTexture(GL_TEXTURE_2D, 4);
+			glBindTexture(GL_TEXTURE_2D, roofChoice);
 		}
 
 		glBegin(GL_QUADS);

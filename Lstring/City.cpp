@@ -45,7 +45,7 @@ void City::init() {
 	glGenTextures(6, &texture[0]);
 
 	int width, height;
-	char* filenames[6] = { "./building_texture/building1.jpg", "./building_texture/building2.jpg", "./building_texture/building3.jpg", 
+	char* filenames[6] = { "./building_texture/building5.jpg", "./building_texture/building2.jpg", "./building_texture/building3.jpg", 
 		"./building_texture/building4.jpg", "./building_texture/roof1.jpg", "./building_texture/roof2.jpg" };
 	unsigned char* image;
 
